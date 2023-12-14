@@ -5,11 +5,19 @@ using TodoApi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
-builder.Services.AddScoped<ITodoRepository, InMemoryTodoRepository>();
+var connectionString = builder.Configuration.GetConnectionString("TodoDb");
+builder.Services.AddSqlServer<TodoDb>(connectionString);
+builder.Services.AddScoped<ITodoRepository, EntityFrameworkTodoRepository>();
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+  var todoDb = scope.ServiceProvider.GetRequiredService<TodoDb>();
+  todoDb.Database.Migrate();
+}
 
 app.MapTodoEndpoints();
 
