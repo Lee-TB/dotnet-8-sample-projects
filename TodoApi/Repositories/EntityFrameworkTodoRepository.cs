@@ -1,14 +1,14 @@
-
 using Microsoft.EntityFrameworkCore;
 using TodoApi.Entities;
 
 namespace TodoApi.Repositories;
 
-public class InMemoryTodoRepository : ITodoRepository
+public class EntityFrameworkTodoRepository : ITodoRepository
 {
+
     private readonly TodoDb _db;
 
-    public InMemoryTodoRepository(TodoDb db) => this._db = db;
+    public EntityFrameworkTodoRepository(TodoDb db) => this._db = db;
 
     public async Task<IEnumerable<Todo>> GetAllAsync()
     {
@@ -38,6 +38,4 @@ public class InMemoryTodoRepository : ITodoRepository
         this._db.Todos.Remove(todo);
         await this._db.SaveChangesAsync();
     }
-
-
 }
